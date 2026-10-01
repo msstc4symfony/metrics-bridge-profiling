@@ -1,0 +1,79 @@
+{
+  "name": "msstc4symfony/metrics-bridge-profiling",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Maxim Shamaev",
+      "email": "maxim.shamaev@gmail.com"
+    }
+  ],
+  "type": "symfony-bundle",
+  "description": "Exports msstc4symfony/profiling-bundle span durations as msstc4symfony/metrics-bundle Prometheus metrics",
+  "minimum-stability": "stable",
+  "keywords": [
+    "php",
+    "symfony",
+    "profiling",
+    "prometheus",
+    "metrics"
+  ],
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Msstc4Symfony\\MetricsBridgeProfiling\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Msstc4Symfony\\MetricsBridgeProfiling\\Test\\": "tests/"
+    }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/msstc4symfony/metrics-bundle"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/msstc4symfony/profiling-bundle"
+    }
+  ],
+  "require": {
+    "php": ">=8.4",
+    "composer-runtime-api": ">=2.2",
+    "msstc4symfony/metrics-bundle": "^1.2",
+    "msstc4symfony/profiling-bundle": "^1.0",
+    "symfony/config": "^6.4|^7.0|^8.0",
+    "symfony/dependency-injection": "^6.4|^7.0|^8.0",
+    "symfony/http-kernel": "^6.4|^7.0|^8.0"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.55",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan": "^2.1",
+    "phpstan/phpstan-strict-rules": "^2.0",
+    "phpstan/phpstan-symfony": "^2.0",
+    "phpunit/phpunit": ">=11.0",
+    "promphp/prometheus_client_php": "^2.6",
+    "rector/rector": "^2.1",
+    "roave/security-advisories": "dev-latest",
+    "symfony/filesystem": "^6.4|^7.0|^8.0",
+    "symfony/framework-bundle": "^6.4|^7.0|^8.0",
+    "symfony/monolog-bundle": "^3.11|^4.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "phpstan/extension-installer": true
+    },
+    "sort-packages": true
+  },
+  "conflict": {
+    "symfony/symfony": "*"
+  },
+  "extra": {
+    "symfony": {
+      "allow-contrib": false,
+      "require": "^6.4|^7.0|^8.0"
+    }
+  }
+}
