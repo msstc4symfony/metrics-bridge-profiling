@@ -6,6 +6,7 @@ namespace Msstc4Symfony\MetricsBridgeProfiling\DependencyInjection\Compiler;
 
 use LogicException;
 use Msstc4Symfony\MetricsBridgeProfiling\Enum\ProfilingMetric;
+use Msstc4Symfony\MetricsBundle\Framework\Profiling\Processor\EndSpan\MetricProcessor;
 use Msstc4Symfony\ProfilingBundle\Framework\Processor\EndSpan\EndSpanProcessorInterface;
 use Override;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -28,7 +29,7 @@ final class TakeOverProfilingMetricsPass implements CompilerPassInterface
     public const string APPLICATION_NAME_PARAMETER = 'metrics_bundle.applicationName';
 
     /** @internal */
-    public const string DEPRECATED_PROCESSOR = 'Msstc4Symfony\MetricsBundle\Framework\Profiling\Processor\EndSpan\MetricProcessor';
+    public const string DEPRECATED_PROCESSOR = MetricProcessor::class;
 
     #[Override]
     public function process(ContainerBuilder $container): void
