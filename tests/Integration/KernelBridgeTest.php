@@ -8,6 +8,7 @@ use Msstc4Symfony\MetricsBridgeProfiling\DependencyInjection\Compiler\TakeOverPr
 use Msstc4Symfony\MetricsBridgeProfiling\Enum\ProfilingMetric;
 use Msstc4Symfony\MetricsBridgeProfiling\Processor\MetricEndSpanProcessor;
 use Msstc4Symfony\MetricsBridgeProfiling\Test\Integration\Kernel\TestKernel;
+use Msstc4Symfony\MetricsBridgeProfiling\Test\Unit\Fixture\ExceptionHandlerSnapshot;
 use Msstc4Symfony\MetricsBridgeProfiling\Test\Unit\Fixture\InMemoryRegistry;
 use Msstc4Symfony\ProfilingBundle\Framework\ProfilingFactoryInterface;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -17,7 +18,6 @@ use Prometheus\RegistryInterface;
 use ReflectionProperty;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Throwable;
 
 #[CoversNothing]
 final class KernelBridgeTest extends TestCase
@@ -27,8 +27,7 @@ final class KernelBridgeTest extends TestCase
     /** @var list<string> */
     private array $metricsDeprecations = [];
 
-    /** @var (callable(Throwable): void)|null */
-    private $exceptionHandler;
+    private ExceptionHandlerSnapshot $exceptionHandlers;
 
     protected function setUp(): void
     {
@@ -41,7 +40,7 @@ final class KernelBridgeTest extends TestCase
 
             return false;
         }, E_USER_DEPRECATED);
-        $this->exceptionHandler = $this->currentExceptionHandler();
+        $this->exceptionHandlers = ExceptionHandlerSnapshot::take();
         $this->kernel = new TestKernel('test', false);
         $this->kernel->boot();
     }
@@ -50,11 +49,10 @@ final class KernelBridgeTest extends TestCase
     {
         restore_error_handler();
         $this->kernel->shutdown();
-        // With another error handler active, FrameworkBundle::boot() on symfony/error-handler < 6.4.44
+        // With another error handler active, FrameworkBundle::boot() on symfony/error-handler releases
+        // without the "another error handler is in charge" fix (6.4.44 and the matching 7.x/8.x patches)
         // leaves its exception handler installed, which PHPUnit reports as risky.
-        while (null !== ($handler = $this->currentExceptionHandler()) && $handler !== $this->exceptionHandler) {
-            restore_exception_handler();
-        }
+        $this->exceptionHandlers->restore();
 
         new Filesystem()->remove(TestKernel::cacheRoot());
     }
@@ -94,14 +92,6 @@ final class KernelBridgeTest extends TestCase
 
         self::assertContains(MetricEndSpanProcessor::class, $classes);
         self::assertNotContains(TakeOverProfilingMetricsPass::DEPRECATED_PROCESSOR, $classes);
-    }
-
-    private function currentExceptionHandler(): ?callable
-    {
-        $handler = set_exception_handler(null);
-        restore_exception_handler();
-
-        return $handler;
     }
 
     private function container(): ContainerInterface

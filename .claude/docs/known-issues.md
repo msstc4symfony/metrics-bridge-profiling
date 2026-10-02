@@ -41,11 +41,28 @@
 - PHPStan `level: 10` (bundle-standard >= 1.8.0 допускает 9/10/max), baseline пуст.
 - prefer-lowest (Symfony 6.4.0, symfony/error-handler 6.4.0): `KernelBridgeTest` ставит свой
   error handler до `boot()`, и `ErrorHandler::register()` из `FrameworkBundle::boot()` до
-  error-handler 6.4.44 оставлял свой exception handler (PHPUnit: «did not remove its own
+  фикса «another error handler is in charge» (6.4.44 и отдельные бэкпорты в ветки 7.x/8.x —
+  ранние 7.x/8.x тоже затронуты) оставлял свой exception handler (PHPUnit: «did not remove its own
   exception handlers», risky → fail). Нижнюю границу не поднимали: error-handler транзитивный,
   в `require` верификатор допускает только `^6.4|^7.0|^8.0`, в `require-dev` CI перепинивает его
   в `6.4.*`, а `conflict` навязал бы ограничение пользователям ради чисто тестовой проблемы.
-  Вместо этого `tearDown()` снимает exception handler'ы до сохранённого перед `boot()`.
+  Вместо этого `tearDown()` снимает exception handler'ы до сохранённого перед `boot()` через
+  `Test\Unit\Fixture\ExceptionHandlerSnapshot` (1.1.1): если сохранённого handler'а в стеке уже
+  нет, снятые возвращаются обратно, а не срезается весь стек вместе с handler'ом PHPUnit.
+  Стек exception handler'ов в PHP не читается напрямую — текущий берётся через
+  `set_exception_handler(null)` + `restore_exception_handler()`. Голый `?callable` у источника
+  сужен `@return (callable(Throwable): void)|null`; нативный тип свойства `callable` невозможен,
+  `Closure::fromCallable` сломал бы сравнение `!==`, поэтому `mixed` + PHPDoc.
+- Ревью v1.1.0 (2026-10-02 UTC), отклонено/вынесено в bundle-standard: `Makefile`,
+  `phpunit.xml.dist` и `phpstan-ci.neon` — `ExactFileRule` верификатора (байт-в-байт с шаблонами
+  bundle-standard 1.8.0), локальная правка ломает `verify-standard`. Поэтому здесь не правились:
+  (а) подсказки `test`/`test-integration` про самопропуск интеграционных тестов и
+  «needs the composer-ci.json install» неверны для этого бандла (всё нужное уже в `require-dev`);
+  (б) `.PHONY` перечисляет только `help`; (в) комментарий у `<source>` в `phpunit.xml.dist`
+  обещает больше, чем `failOnDeprecation` ловит: `trigger_deprecation()` глушит `@`, а
+  `ignoreSuppressionOfDeprecations` выключен — legacy-deprecation по-прежнему ловит свой
+  error handler `KernelBridgeTest`; (г) комментарий `phpstan-ci.neon` про `class.notFound` в
+  baseline устарел (baseline пуст). Всё — follow-up в шаблоны bundle-standard.
 - Infection в CI: `infection-min-msi`/`infection-min-covered-msi` = 93 (замер 97.7 − ~4).
 - Отсутствие `trigger_deprecation` legacy-процессора при установленном мосте проверяет
   `KernelBridgeTest` своим error handler'ом (`@`-подавленные deprecation PHPUnit не видит).
