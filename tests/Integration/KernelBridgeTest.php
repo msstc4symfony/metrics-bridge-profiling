@@ -17,6 +17,7 @@ use Prometheus\RegistryInterface;
 use ReflectionProperty;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Throwable;
 
 #[CoversNothing]
 final class KernelBridgeTest extends TestCase
@@ -25,6 +26,9 @@ final class KernelBridgeTest extends TestCase
 
     /** @var list<string> */
     private array $metricsDeprecations = [];
+
+    /** @var (callable(Throwable): void)|null */
+    private $exceptionHandler;
 
     protected function setUp(): void
     {
@@ -37,6 +41,7 @@ final class KernelBridgeTest extends TestCase
 
             return false;
         }, E_USER_DEPRECATED);
+        $this->exceptionHandler = $this->currentExceptionHandler();
         $this->kernel = new TestKernel('test', false);
         $this->kernel->boot();
     }
@@ -45,6 +50,12 @@ final class KernelBridgeTest extends TestCase
     {
         restore_error_handler();
         $this->kernel->shutdown();
+        // With another error handler active, FrameworkBundle::boot() on symfony/error-handler < 6.4.44
+        // leaves its exception handler installed, which PHPUnit reports as risky.
+        while (null !== ($handler = $this->currentExceptionHandler()) && $handler !== $this->exceptionHandler) {
+            restore_exception_handler();
+        }
+
         new Filesystem()->remove(TestKernel::cacheRoot());
     }
 
@@ -83,6 +94,14 @@ final class KernelBridgeTest extends TestCase
 
         self::assertContains(MetricEndSpanProcessor::class, $classes);
         self::assertNotContains(TakeOverProfilingMetricsPass::DEPRECATED_PROCESSOR, $classes);
+    }
+
+    private function currentExceptionHandler(): ?callable
+    {
+        $handler = set_exception_handler(null);
+        restore_exception_handler();
+
+        return $handler;
     }
 
     private function container(): ContainerInterface

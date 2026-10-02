@@ -13,7 +13,7 @@ Symfony bundle (`msstc4symfony/metrics-bridge-profiling`, namespace
 
 Develop against the CI profile: `COMPOSER=composer-ci.json composer install`.
 
-- `make check` — `php -l`, PHPStan level 9, PHP-CS-Fixer, `composer validate --strict`,
+- `make check` — `php -l`, PHPStan level 10, PHP-CS-Fixer, `composer validate --strict`,
   `composer audit`, Rector dry-run, deptrac. Run as `COMPOSER=composer-ci.json make check`.
 - `make test` — unit + integration suites; `make fix`.
 

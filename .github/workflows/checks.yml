@@ -18,9 +18,11 @@ concurrency:
 
 jobs:
   standard:
-    uses: msstc4symfony/bundle-standard/.github/workflows/php-bundle.yml@v1.7.2
+    uses: msstc4symfony/bundle-standard/.github/workflows/php-bundle.yml@v1.8.0
     with:
       slug: msstc4symfony/metrics-bridge-profiling
       extensions: 'mbstring, xml, ctype, iconv, intl, json, redis'
+      infection-min-msi: 93
+      infection-min-covered-msi: 93
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
