@@ -1,0 +1,87 @@
+{
+  "name": "msstc4symfony/metrics-bridge-profiling",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Maxim Shamaev",
+      "email": "maxim.shamaev@gmail.com"
+    }
+  ],
+  "type": "symfony-bundle",
+  "description": "Exports msstc4symfony/profiling-bundle span durations as msstc4symfony/metrics-bundle Prometheus metrics (CI profile — CI-only tools)",
+  "minimum-stability": "stable",
+  "keywords": [
+    "php",
+    "symfony",
+    "profiling",
+    "prometheus",
+    "metrics"
+  ],
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Msstc4Symfony\\MetricsBridgeProfiling\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Msstc4Symfony\\MetricsBridgeProfiling\\Test\\": "tests/"
+    }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/msstc4symfony/metrics-bundle"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/msstc4symfony/profiling-bundle"
+    }
+  ],
+  "require": {
+    "php": ">=8.4",
+    "composer-runtime-api": ">=2.2",
+    "msstc4symfony/metrics-bundle": "^1.0",
+    "msstc4symfony/profiling-bundle": "^1.0",
+    "symfony/config": "^7.4|^8.0",
+    "symfony/dependency-injection": "^7.4|^8.0",
+    "symfony/http-kernel": "^7.4|^8.0"
+  },
+  "require-dev": {
+    "deptrac/deptrac": "^4.6",
+    "friendsofphp/php-cs-fixer": "^3.55",
+    "infection/infection": "^0.32",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan": "^2.1",
+    "phpstan/phpstan-strict-rules": "^2.0",
+    "phpstan/phpstan-symfony": "^2.0",
+    "phpunit/phpunit": ">=11.0",
+    "promphp/prometheus_client_php": "^2.6",
+    "rector/rector": "^2.1",
+    "roave/backward-compatibility-check": "^8.20",
+    "roave/security-advisories": "dev-latest",
+    "symfony/filesystem": "^7.4|^8.0",
+    "symfony/framework-bundle": "^7.4|^8.0",
+    "symfony/monolog-bundle": "^3.11|^4.0"
+  },
+  "config": {
+    "github-protocols": [
+      "https"
+    ],
+    "allow-plugins": {
+      "infection/extension-installer": true,
+      "phpstan/extension-installer": true
+    },
+    "sort-packages": true
+  },
+  "conflict": {
+    "symfony/error-handler": "<7.4.17 || >=8.0,<8.1.5",
+    "symfony/symfony": "*"
+  },
+  "extra": {
+    "symfony": {
+      "allow-contrib": false,
+      "require": "^7.4|^8.0"
+    }
+  }
+}

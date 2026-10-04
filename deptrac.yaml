@@ -1,0 +1,36 @@
+deptrac:
+    paths:
+        - ./src
+
+    exclude_files:
+        - '#.*test.*#i'
+
+    layers:
+        - name: Metric
+          collectors:
+              - type: directory
+                value: src/(Enum|Collector)/.*
+
+        - name: Processor
+          collectors:
+              - type: directory
+                value: src/Processor/.*
+
+        - name: Wiring
+          collectors:
+              - type: directory
+                value: src/DependencyInjection/.*
+              - type: classLike
+                value: Msstc4Symfony\\MetricsBridgeProfiling\\MetricsBridgeProfilingBundle
+
+    ruleset:
+        # The metric definition and its collector know metrics-bundle only.
+        Metric: ~
+
+        # Translates profiling spans into metric observations.
+        Processor:
+            - Metric
+
+        Wiring:
+            - Metric
+            - Processor
