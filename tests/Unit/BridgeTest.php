@@ -23,7 +23,7 @@ use Psr\Log\NullLogger;
 #[CoversClass(MetricEndSpanProcessor::class)]
 final class BridgeTest extends TestCase
 {
-    private const string METRIC = 'symfony_profiling_span_duration_histogram_seconds';
+    private const METRIC = 'symfony_profiling_span_duration_histogram_seconds';
 
     private CollectorRegistry $registry;
 
@@ -71,7 +71,7 @@ final class BridgeTest extends TestCase
         $span->method('getMessage')->willReturn('request orders_list');
         $span->method('getDuration')->willReturn(0.12345649);
 
-        new MetricEndSpanProcessor($this->collector())->process($span, []);
+        (new MetricEndSpanProcessor($this->collector()))->process($span, []);
 
         self::assertSame([[['app', 'cmp', 'request_orders_list'], 0.123456]], InMemoryRegistry::sums($this->registry, self::METRIC));
     }

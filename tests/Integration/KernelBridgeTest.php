@@ -30,7 +30,7 @@ final class KernelBridgeTest extends TestCase
 
     protected function setUp(): void
     {
-        new Filesystem()->remove(TestKernel::cacheRoot());
+        (new Filesystem())->remove(TestKernel::cacheRoot());
         // trigger_deprecation() silences its notice with @, which PHPUnit ignores; record it directly.
         set_error_handler(function (int $level, string $message): bool {
             if (str_contains($message, 'msstc4symfony/')) {
@@ -52,7 +52,7 @@ final class KernelBridgeTest extends TestCase
         // installed when another error handler is active, which PHPUnit reports as risky.
         $this->exceptionHandlers->restore();
 
-        new Filesystem()->remove(TestKernel::cacheRoot());
+        (new Filesystem())->remove(TestKernel::cacheRoot());
     }
 
     public function testASpanIsRecordedOnceWithTheApplicationLabels(): void
@@ -83,7 +83,7 @@ final class KernelBridgeTest extends TestCase
     {
         $factory = $this->container()->get(ProfilingFactoryInterface::class);
         self::assertIsObject($factory);
-        $processors = new ReflectionProperty($factory, 'endSpanProcessors')->getValue($factory);
+        $processors = (new ReflectionProperty($factory, 'endSpanProcessors'))->getValue($factory);
         self::assertIsIterable($processors);
         $classes = [];
         foreach ($processors as $processor) {

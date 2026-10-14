@@ -13,6 +13,6 @@ final class MetricsBridgeProfilingBundleTest extends TestCase
 {
     public function testExtensionAliasFollowsTheFamilyNaming(): void
     {
-        self::assertSame('msstc4symfony_metrics_bridge_profiling', new MetricsBridgeProfilingBundle()->getContainerExtension()?->getAlias());
+        self::assertSame('msstc4symfony_metrics_bridge_profiling', (new MetricsBridgeProfilingBundle())->getContainerExtension()?->getAlias());
     }
 }

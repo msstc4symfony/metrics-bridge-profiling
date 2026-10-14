@@ -7,7 +7,7 @@ Guidance for Claude Code in this repository. Deep references live under `.claude
 Symfony bundle (`msstc4symfony/metrics-bridge-profiling`, namespace
 `Msstc4Symfony\MetricsBridgeProfiling`) that connects `msstc4symfony/profiling-bundle` to
 `msstc4symfony/metrics-bundle`: every recorded span becomes an observation of the
-`profiling_span_duration_histogram_seconds` histogram. PHP >= 8.4, Symfony 7.4 / 8.x.
+`profiling_span_duration_histogram_seconds` histogram. PHP >= 8.2, Symfony 7.4 / 8.x.
 
 ## Common commands
 

@@ -4,6 +4,13 @@ All notable changes to this bundle are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow
 [Semantic Versioning](https://semver.org/); dates are UTC.
 
+## [1.1.0] - 2026-10-14
+
+### Changed
+
+- Requires PHP 8.2 instead of 8.4 (Symfony 8 still needs PHP 8.4).
+- Requires metrics-bundle ^1.4 and profiling-bundle ^1.1, their PHP 8.2 releases.
+
 ## [1.0.0] - 2026-10-04
 
 First release of `msstc4symfony/metrics-bridge-profiling` (namespace `Msstc4Symfony\MetricsBridgeProfiling`).
@@ -24,4 +31,5 @@ First release of `msstc4symfony/metrics-bridge-profiling` (namespace `Msstc4Symf
 - PHP >= 8.4, Symfony ^7.4|^8.0, `msstc4symfony/metrics-bundle` ^1.0,
   `msstc4symfony/profiling-bundle` ^1.0.
 
+[1.1.0]: https://github.com/msstc4symfony/metrics-bridge-profiling/releases/tag/v1.1.0
 [1.0.0]: https://github.com/msstc4symfony/metrics-bridge-profiling/releases/tag/v1.0.0

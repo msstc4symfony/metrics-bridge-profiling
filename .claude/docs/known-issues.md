@@ -6,8 +6,8 @@
   `round(..., 6)` — только в `MetricEndSpanProcessor`; коллектор пишет значение как есть.
 - `KernelBridgeTest` страхуется от deprecation-уведомлений бандлов msstc4symfony своим error
   handler'ом: `trigger_deprecation()` глушит `@`, PHPUnit такие не видит.
-- Siblings подключены как `^1.0` (vcs-репозитории по https в `composer.json` / `composer-ci.json`);
-  в `composer-local.json` path-репозитории с версией `1.0.0`.
+- Siblings подключены как `^1.4` / `^1.1` (с 1.1.0, их релизы на PHP 8.2; vcs-репозитории по https в `composer.json` / `composer-ci.json`);
+  в `composer-local.json` path-репозитории с версиями `1.4.0` / `1.1.0`.
 - prefer-lowest (Symfony 7.4.0): `FrameworkBundle` 7.4.0 / `symfony/error-handler` < 7.4.17 оставляет
   exception handler после `boot()` при чужом активном error handler'е (PHPUnit: «did not remove its own
   exception handlers», risky). CI-профиль объявляет `conflict` `symfony/error-handler: <7.4.17 || >=8.0,<8.1.5` (общий для всех бандлов)
@@ -37,3 +37,13 @@
   error handler `KernelBridgeTest`; (г) комментарий `phpstan-ci.neon` про `class.notFound` в
   baseline устарел (baseline пуст). Всё — follow-up в шаблоны bundle-standard.
 - Infection в CI: `infection-min-msi`/`infection-min-covered-msi` = 93 (замер 97.7 − ~4).
+- **Код должен разбираться на PHP 8.2** (с 2026-10-14 UTC, профиль `php82` из bundle-standard v2.0.0+): без
+  типизированных констант (`const string X`), без анонимных `new readonly class {}` (оба — 8.3;
+  именованный `readonly class` — 8.2, можно) и без `new X()->m()` / `new X()(...)` (8.4) — только
+  `(new X())->m()`. PHPStan (`phpVersion.min: 80200`) ловит типизированные
+  константы; остальное ловят только `php -l` в job «minimal» (PHP 8.2) и ячейки PHPUnit на 8.2. Шаблоны Rector
+  (`withPhpVersion(PHP_82)`) и CS-Fixer (`new_expression_parentheses`) синтаксис обратно не поднимают.
+  `#[Override]` (8.3) допустим: на 8.2 атрибут не инстанцируется. `array_any/all/find` (8.4) — только с
+  `symfony/polyfill-php84` в `require`. Symfony 8 ставится только на PHP 8.4+.
+  `composer-ci.lock` собран на PHP 8.4 (Symfony 8): на 8.2/8.3 локально — `COMPOSER=composer-ci.json composer update`
+  (или `--prefer-lowest`, как ячейка CI), не `install`.

@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class RegisterProfilingMetricsPass implements CompilerPassInterface
 {
-    private const string METRIC_ENUMS_PARAMETER = 'msstc4symfony_metrics.metric_enums';
+    private const METRIC_ENUMS_PARAMETER = 'msstc4symfony_metrics.metric_enums';
 
     #[Override]
     public function process(ContainerBuilder $container): void
