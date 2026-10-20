@@ -20,13 +20,9 @@ symfony_profiling_span_duration_histogram_seconds{application, component, messag
 
 | Bridge | PHP  | Symfony       | metrics-bundle | profiling-bundle |
 |--------|------|---------------|----------------|------------------|
-| 2.0    | 8.2+ | 7.4, 8.x      | ^2.0@rc        | ^2.0@rc          |
+| 2.0    | 8.2+ | 7.4, 8.x      | ^2.0           | ^2.0             |
 | 1.1    | 8.2+ | 7.4, 8.x      | ^1.4           | ^1.1             |
 | 1.0    | 8.4+ | 7.4, 8.x      | ^1.0           | ^1.0             |
-
-While metrics-bundle and profiling-bundle 2.0 are release candidates, require them with `@rc` (or set
-`minimum-stability: RC` with `prefer-stable: true`): a stability flag in a dependency's `require` does not reach the
-root package.
 
 Symfony 8.x needs PHP 8.4; on PHP 8.2 and 8.3 Composer installs Symfony 7.4.
 

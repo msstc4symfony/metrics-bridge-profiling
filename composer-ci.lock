@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe16167686e184b00d5c0f08f0cddd1d",
+    "content-hash": "39e6028c8fc2cbeb4bca0af58faca049",
     "packages": [
         {
             "name": "monolog/monolog",
@@ -113,16 +113,16 @@
         },
         {
             "name": "msstc4symfony/metrics-bundle",
-            "version": "v2.0.0-rc.1",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/msstc4symfony/metrics-bundle.git",
-                "reference": "6c576f14149507abc6c6e90db1b65cc6f6f7bc03"
+                "reference": "67d55dbd03d6b4e960e0c309b2755cad84d4ee25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/msstc4symfony/metrics-bundle/zipball/6c576f14149507abc6c6e90db1b65cc6f6f7bc03",
-                "reference": "6c576f14149507abc6c6e90db1b65cc6f6f7bc03",
+                "url": "https://api.github.com/repos/msstc4symfony/metrics-bundle/zipball/67d55dbd03d6b4e960e0c309b2755cad84d4ee25",
+                "reference": "67d55dbd03d6b4e960e0c309b2755cad84d4ee25",
                 "shasum": ""
             },
             "require": {
@@ -196,22 +196,22 @@
                 "symfony"
             ],
             "support": {
-                "source": "https://github.com/msstc4symfony/metrics-bundle/tree/v2.0.0-rc.1"
+                "source": "https://github.com/msstc4symfony/metrics-bundle/tree/v2.0.0"
             },
-            "time": "2026-10-19T11:11:53+00:00"
+            "time": "2026-10-20T10:25:16+00:00"
         },
         {
             "name": "msstc4symfony/profiling-bundle",
-            "version": "v2.0.0-rc.1",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/msstc4symfony/profiling-bundle.git",
-                "reference": "6a233f272768af10006abaccb1a5aa562e231738"
+                "reference": "67de82cc34bdd92e88ce99a74a240df6d42a504c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/msstc4symfony/profiling-bundle/zipball/6a233f272768af10006abaccb1a5aa562e231738",
-                "reference": "6a233f272768af10006abaccb1a5aa562e231738",
+                "url": "https://api.github.com/repos/msstc4symfony/profiling-bundle/zipball/67de82cc34bdd92e88ce99a74a240df6d42a504c",
+                "reference": "67de82cc34bdd92e88ce99a74a240df6d42a504c",
                 "shasum": ""
             },
             "require": {
@@ -281,9 +281,9 @@
                 "symfony"
             ],
             "support": {
-                "source": "https://github.com/msstc4symfony/profiling-bundle/tree/v2.0.0-rc.1"
+                "source": "https://github.com/msstc4symfony/profiling-bundle/tree/v2.0.0"
             },
-            "time": "2026-10-19T07:01:28+00:00"
+            "time": "2026-10-20T10:25:04+00:00"
         },
         {
             "name": "promphp/prometheus_client_php",
@@ -12261,8 +12261,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "msstc4symfony/metrics-bundle": 5,
-        "msstc4symfony/profiling-bundle": 5,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
