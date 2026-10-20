@@ -19,12 +19,13 @@ Develop against the CI profile: `COMPOSER=composer-ci.json composer install`.
 
 ## Architecture in 60 seconds
 
-- `Enum\ProfilingMetric` — the single declaration of the metric (name, labels, buckets).
-- `Collector\SpanDurationCollector` (extends metrics' `AbstractCollector`) normalises the span
-  message into the `message` label (`normalizeLabel()`, the only place that does it).
-- `Processor\MetricEndSpanProcessor` — profiling `EndSpanProcessorInterface`, autoconfigured;
-  records `round(getDuration(), 6)` (the only place that rounds).
-- `DependencyInjection\Compiler\RegisterProfilingMetricsPass` appends the enum to the
+- `Infrastructure\Metrics\ProfilingMetric` — the single declaration of the metric (name, labels, buckets); public API.
+- `Infrastructure\Metrics\SpanDurationCollector` (`@internal`) records through metrics 2.0's `MetricRecorderInterface`,
+  normalises the span message into the `message` label (`normalizeLabel()`, the only place that does it) and logs
+  any recorder failure to the `metrics_bundle` channel.
+- `Infrastructure\Metrics\MetricEndSpanProcessor` (`@internal`) — profiling 2.0 `EndSpanProcessorInterface`,
+  autoconfigured; records `round(getDuration(), 6)` (the only place that rounds).
+- `DependencyInjection\CompilerPass\RegisterProfilingMetricsPass` appends the enum to the
   `msstc4symfony_metrics.metric_enums` container parameter; without MetricsBundle it throws.
 - Extension alias: `msstc4symfony_metrics_bridge_profiling` (no configuration tree).
 

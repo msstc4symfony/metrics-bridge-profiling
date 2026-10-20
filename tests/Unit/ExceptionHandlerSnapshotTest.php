@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Msstc4Symfony\MetricsBridgeProfiling\Test\Unit\Fixture;
+namespace Msstc4Symfony\MetricsBridgeProfiling\Test\Unit;
 
+use Msstc4Symfony\MetricsBridgeProfiling\Test\Fixtures\ExceptionHandlerSnapshot;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Throwable;

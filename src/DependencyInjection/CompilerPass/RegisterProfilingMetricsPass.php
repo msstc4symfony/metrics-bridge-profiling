@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Msstc4Symfony\MetricsBridgeProfiling\DependencyInjection\Compiler;
+namespace Msstc4Symfony\MetricsBridgeProfiling\DependencyInjection\CompilerPass;
 
 use LogicException;
-use Msstc4Symfony\MetricsBridgeProfiling\Enum\ProfilingMetric;
+use Msstc4Symfony\MetricsBridgeProfiling\Infrastructure\Metrics\ProfilingMetric;
 use Override;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * @internal
+ */
 final class RegisterProfilingMetricsPass implements CompilerPassInterface
 {
     private const METRIC_ENUMS_PARAMETER = 'msstc4symfony_metrics.metric_enums';

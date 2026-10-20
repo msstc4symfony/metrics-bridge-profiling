@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Msstc4Symfony\MetricsBridgeProfiling\Test\Unit;
 
-use Msstc4Symfony\MetricsBridgeProfiling\Collector\SpanDurationCollector;
-use Msstc4Symfony\MetricsBridgeProfiling\Enum\ProfilingMetric;
-use Msstc4Symfony\MetricsBridgeProfiling\Processor\MetricEndSpanProcessor;
-use Msstc4Symfony\MetricsBridgeProfiling\Test\Unit\Fixture\InMemoryRegistry;
-use Msstc4Symfony\MetricsBundle\Infrastructure\Repository\MetricRepository;
-use Msstc4Symfony\ProfilingBundle\Framework\Assembler\SpanAssembler;
-use Msstc4Symfony\ProfilingBundle\Framework\ProfilingFactory;
-use Msstc4Symfony\ProfilingBundle\Framework\Span\SpanInterface;
+use Msstc4Symfony\MetricsBridgeProfiling\Infrastructure\Metrics\MetricEndSpanProcessor;
+use Msstc4Symfony\MetricsBridgeProfiling\Infrastructure\Metrics\ProfilingMetric;
+use Msstc4Symfony\MetricsBridgeProfiling\Infrastructure\Metrics\SpanDurationCollector;
+use Msstc4Symfony\MetricsBridgeProfiling\Test\Fixtures\RecordingMetricRecorder;
+use Msstc4Symfony\ProfilingBundle\Application\Assembler\SpanAssembler;
+use Msstc4Symfony\ProfilingBundle\Application\ProfilingFactory;
+use Msstc4Symfony\ProfilingBundle\Application\Span\SpanInterface;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Prometheus\CollectorRegistry;
 use Psr\Log\NullLogger;
 
 #[CoversClass(ProfilingMetric::class)]
@@ -23,13 +22,12 @@ use Psr\Log\NullLogger;
 #[CoversClass(MetricEndSpanProcessor::class)]
 final class BridgeTest extends TestCase
 {
-    private const METRIC = 'symfony_profiling_span_duration_histogram_seconds';
+    private RecordingMetricRecorder $recorder;
 
-    private CollectorRegistry $registry;
-
+    #[Override]
     protected function setUp(): void
     {
-        $this->registry = InMemoryRegistry::create();
+        $this->recorder = new RecordingMetricRecorder();
     }
 
     #[DataProvider('spanMessages')]
@@ -37,7 +35,7 @@ final class BridgeTest extends TestCase
     {
         $this->collector()->observe($message, 0.5);
 
-        self::assertSame([[['app', 'cmp', $label], 0.5]], InMemoryRegistry::sums($this->registry, self::METRIC));
+        self::assertSame([[[$label], 0.5]], $this->observed());
     }
 
     /**
@@ -62,7 +60,7 @@ final class BridgeTest extends TestCase
         $span->end(['profiling_implicit_end' => true]);
         usleep(2000);
 
-        self::assertSame([[['app', 'cmp', 'request_orders_list'], round($span->getDuration(), 6)]], InMemoryRegistry::sums($this->registry, self::METRIC));
+        self::assertSame([[['request_orders_list'], round($span->getDuration(), 6)]], $this->observed());
     }
 
     public function testProcessorRoundsTheDurationToMicroseconds(): void
@@ -73,11 +71,19 @@ final class BridgeTest extends TestCase
 
         (new MetricEndSpanProcessor($this->collector()))->process($span, []);
 
-        self::assertSame([[['app', 'cmp', 'request_orders_list'], 0.123456]], InMemoryRegistry::sums($this->registry, self::METRIC));
+        self::assertSame([[['request_orders_list'], 0.123456]], $this->observed());
     }
 
     private function collector(): SpanDurationCollector
     {
-        return new SpanDurationCollector($this->registry, new MetricRepository([]), 'app', 'cmp');
+        return new SpanDurationCollector($this->recorder);
+    }
+
+    /**
+     * @return list<array{list<scalar>, float|int|null}> labels and value of every observation
+     */
+    private function observed(): array
+    {
+        return array_map(static fn (array $call): array => [$call['labels'], $call['value']], $this->recorder->calls);
     }
 }

@@ -2,16 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Msstc4Symfony\MetricsBridgeProfiling\Processor;
+namespace Msstc4Symfony\MetricsBridgeProfiling\Infrastructure\Metrics;
 
-use Msstc4Symfony\MetricsBridgeProfiling\Collector\SpanDurationCollector;
-use Msstc4Symfony\ProfilingBundle\Framework\Processor\EndSpan\EndSpanProcessorInterface;
-use Msstc4Symfony\ProfilingBundle\Framework\Span\SpanInterface;
+use Msstc4Symfony\ProfilingBundle\Application\Processor\EndSpan\EndSpanProcessorInterface;
+use Msstc4Symfony\ProfilingBundle\Application\Span\SpanInterface;
 use Override;
 
 /**
  * Records the duration fixed by SpanInterface::end(), rounded to microseconds;
  * the end context (for example profiling_implicit_end) never becomes a label.
+ *
+ * @internal
  */
 final readonly class MetricEndSpanProcessor implements EndSpanProcessorInterface
 {

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Msstc4Symfony\MetricsBridgeProfiling\Test\Unit;
 
 use LogicException;
-use Msstc4Symfony\MetricsBridgeProfiling\DependencyInjection\Compiler\RegisterProfilingMetricsPass;
-use Msstc4Symfony\MetricsBridgeProfiling\Enum\ProfilingMetric;
-use Msstc4Symfony\MetricsBundle\Infrastructure\Enum\MetricLabelEnum;
+use Msstc4Symfony\MetricsBridgeProfiling\DependencyInjection\CompilerPass\RegisterProfilingMetricsPass;
+use Msstc4Symfony\MetricsBridgeProfiling\Infrastructure\Metrics\ProfilingMetric;
+use Msstc4Symfony\MetricsBundle\Application\Metric\BuiltInMetric;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -19,21 +19,21 @@ final class RegisterProfilingMetricsPassTest extends TestCase
 
     public function testAppendsTheMetricAfterTheExistingEnums(): void
     {
-        $container = $this->container([MetricLabelEnum::class, 'App\Metrics']);
+        $container = $this->container([BuiltInMetric::class, 'App\Metrics']);
 
         (new RegisterProfilingMetricsPass())->process($container);
 
-        self::assertSame([MetricLabelEnum::class, 'App\Metrics', ProfilingMetric::class], $container->getParameter(self::PARAMETER));
+        self::assertSame([BuiltInMetric::class, 'App\Metrics', ProfilingMetric::class], $container->getParameter(self::PARAMETER));
     }
 
     public function testAppendsTheMetricOnlyOnce(): void
     {
-        $container = $this->container([MetricLabelEnum::class]);
+        $container = $this->container([BuiltInMetric::class]);
 
         (new RegisterProfilingMetricsPass())->process($container);
         (new RegisterProfilingMetricsPass())->process($container);
 
-        self::assertSame([MetricLabelEnum::class, ProfilingMetric::class], $container->getParameter(self::PARAMETER));
+        self::assertSame([BuiltInMetric::class, ProfilingMetric::class], $container->getParameter(self::PARAMETER));
     }
 
     public function testExplainsAMissingMetricsBundle(): void

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Msstc4Symfony\MetricsBridgeProfiling\Test\Unit\Fixture;
+namespace Msstc4Symfony\MetricsBridgeProfiling\Test\Fixtures;
 
 use Prometheus\CollectorRegistry;
 use Prometheus\MetricFamilySamples;

@@ -6,8 +6,10 @@
   `round(..., 6)` — только в `MetricEndSpanProcessor`; коллектор пишет значение как есть.
 - `KernelBridgeTest` страхуется от deprecation-уведомлений бандлов msstc4symfony своим error
   handler'ом: `trigger_deprecation()` глушит `@`, PHPUnit такие не видит.
-- Siblings подключены как `^1.4` / `^1.1` (с 1.1.0, их релизы на PHP 8.2; vcs-репозитории по https в `composer.json` / `composer-ci.json`);
-  в `composer-local.json` path-репозитории с версиями `1.4.0` / `1.1.0`.
+- Siblings подключены как `^2.0@rc` (2.0.0-rc.1; в финале — `^2.0`; vcs-репозитории по https в `composer.json` /
+  `composer-ci.json`); в `composer-local.json` (gitignored) path-репозитории с версиями `2.0.0-rc.1`.
+- Канал логгера коллектора (`metrics_bundle`, без декоратора metrics) проверяет kernel-тест
+  `testTheCollectorLogsToTheUndecoratedMetricsChannel` через reflection `ProfilingFactory::$endSpanProcessors`.
 - prefer-lowest (Symfony 7.4.0): `FrameworkBundle` 7.4.0 / `symfony/error-handler` < 7.4.17 оставляет
   exception handler после `boot()` при чужом активном error handler'е (PHPUnit: «did not remove its own
   exception handlers», risky). CI-профиль объявляет `conflict` `symfony/error-handler: <7.4.17 || >=8.0,<8.1.5` (общий для всех бандлов)

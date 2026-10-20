@@ -2,35 +2,54 @@ deptrac:
     paths:
         - ./src
 
-    exclude_files:
-        - '#.*test.*#i'
-
     layers:
-        - name: Metric
+        - name: Domain
           collectors:
               - type: directory
-                value: src/(Enum|Collector)/.*
+                value: src/Domain/(Entity|Document|ValueObject|Enum|Event|Repository|DocumentRepository)/.*
 
-        - name: Processor
+        - name: DomainService
           collectors:
               - type: directory
-                value: src/Processor/.*
+                value: src/Domain/(Service|Helper|Specification)/.*
 
-        - name: Wiring
+        - name: Application
+          collectors:
+              - type: directory
+                value: src/Application/.*
+
+        - name: Infrastructure
+          collectors:
+              - type: directory
+                value: src/Infrastructure/.*
+
+        - name: Presentation
+          collectors:
+              - type: directory
+                value: src/Presentation/.*
+
+        - name: Framework
+          collectors:
+              - type: directory
+                value: src/Framework/.*
+
+        - name: DependencyInjection
           collectors:
               - type: directory
                 value: src/DependencyInjection/.*
+
+        - name: BundleRoot
+          collectors:
               - type: classLike
-                value: Msstc4Symfony\\MetricsBridgeProfiling\\MetricsBridgeProfilingBundle
+                value: '^Msstc4Symfony\\MetricsBridgeProfiling\\MetricsBridgeProfilingBundle$'
 
     ruleset:
-        # The metric definition and its collector know metrics-bundle only.
-        Metric: ~
+        # The end-span processor, its collector and the metric definition depend on nothing else in the bridge.
+        Infrastructure: ~
 
-        # Translates profiling spans into metric observations.
-        Processor:
-            - Metric
+        # The compiler pass appends the metric definition to metrics-bundle's enum list.
+        DependencyInjection:
+            - Infrastructure
 
-        Wiring:
-            - Metric
-            - Processor
+        BundleRoot:
+            - DependencyInjection

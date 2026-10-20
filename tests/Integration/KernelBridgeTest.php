@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Msstc4Symfony\MetricsBridgeProfiling\Test\Integration;
 
-use Msstc4Symfony\MetricsBridgeProfiling\Enum\ProfilingMetric;
-use Msstc4Symfony\MetricsBridgeProfiling\Processor\MetricEndSpanProcessor;
+use Monolog\Logger;
+use Msstc4Symfony\MetricsBridgeProfiling\Infrastructure\Metrics\MetricEndSpanProcessor;
+use Msstc4Symfony\MetricsBridgeProfiling\Infrastructure\Metrics\ProfilingMetric;
+use Msstc4Symfony\MetricsBridgeProfiling\Infrastructure\Metrics\SpanDurationCollector;
+use Msstc4Symfony\MetricsBridgeProfiling\Test\Fixtures\ExceptionHandlerSnapshot;
+use Msstc4Symfony\MetricsBridgeProfiling\Test\Fixtures\InMemoryRegistry;
 use Msstc4Symfony\MetricsBridgeProfiling\Test\Integration\Kernel\TestKernel;
-use Msstc4Symfony\MetricsBridgeProfiling\Test\Unit\Fixture\ExceptionHandlerSnapshot;
-use Msstc4Symfony\MetricsBridgeProfiling\Test\Unit\Fixture\InMemoryRegistry;
-use Msstc4Symfony\ProfilingBundle\Framework\ProfilingFactoryInterface;
+use Msstc4Symfony\MetricsBundle\Application\LogChannel;
+use Msstc4Symfony\ProfilingBundle\Application\ProfilingFactoryInterface;
+use Override;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Prometheus\CollectorRegistry;
@@ -28,6 +32,7 @@ final class KernelBridgeTest extends TestCase
 
     private ExceptionHandlerSnapshot $exceptionHandlers;
 
+    #[Override]
     protected function setUp(): void
     {
         (new Filesystem())->remove(TestKernel::cacheRoot());
@@ -44,6 +49,7 @@ final class KernelBridgeTest extends TestCase
         $this->kernel->boot();
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         restore_error_handler();
@@ -92,6 +98,28 @@ final class KernelBridgeTest extends TestCase
         }
 
         self::assertSame(1, count(array_keys($classes, MetricEndSpanProcessor::class, true)));
+    }
+
+    public function testTheCollectorLogsToTheUndecoratedMetricsChannel(): void
+    {
+        // Reaches the private collector through the factory: a monolog-bundle change could drop the channel silently.
+        $factory = $this->container()->get(ProfilingFactoryInterface::class);
+        self::assertIsObject($factory);
+        $processors = (new ReflectionProperty($factory, 'endSpanProcessors'))->getValue($factory);
+        self::assertIsIterable($processors);
+        $processor = null;
+        foreach ($processors as $candidate) {
+            if ($candidate instanceof MetricEndSpanProcessor) {
+                $processor = $candidate;
+            }
+        }
+
+        self::assertInstanceOf(MetricEndSpanProcessor::class, $processor);
+        $collector = (new ReflectionProperty($processor, 'collector'))->getValue($processor);
+        self::assertInstanceOf(SpanDurationCollector::class, $collector);
+        $logger = (new ReflectionProperty($collector, 'logger'))->getValue($collector);
+        self::assertInstanceOf(Logger::class, $logger);
+        self::assertSame(LogChannel::NAME, $logger->getName());
     }
 
     private function container(): ContainerInterface

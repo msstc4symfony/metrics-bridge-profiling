@@ -20,8 +20,13 @@ symfony_profiling_span_duration_histogram_seconds{application, component, messag
 
 | Bridge | PHP  | Symfony       | metrics-bundle | profiling-bundle |
 |--------|------|---------------|----------------|------------------|
-| 1.1+   | 8.2+ | 7.4, 8.x      | ^1.4           | ^1.1             |
+| 2.0    | 8.2+ | 7.4, 8.x      | ^2.0@rc        | ^2.0@rc          |
+| 1.1    | 8.2+ | 7.4, 8.x      | ^1.4           | ^1.1             |
 | 1.0    | 8.4+ | 7.4, 8.x      | ^1.0           | ^1.0             |
+
+While metrics-bundle and profiling-bundle 2.0 are release candidates, require them with `@rc` (or set
+`minimum-stability: RC` with `prefer-stable: true`): a stability flag in a dependency's `require` does not reach the
+root package.
 
 Symfony 8.x needs PHP 8.4; on PHP 8.2 and 8.3 Composer installs Symfony 7.4.
 
@@ -50,6 +55,15 @@ Nothing to configure: what gets recorded is decided by the profiling-bundle conf
 Every distinct span message is a new time series. Keep messages low-cardinality
 (`request orders_show`, not `request /orders/42`); put ids into the span context, which is
 never exported.
+
+## Public API
+
+The bundle class `Msstc4Symfony\MetricsBridgeProfiling\MetricsBridgeProfilingBundle` and the metric definition
+`Msstc4Symfony\MetricsBridgeProfiling\Infrastructure\Metrics\ProfilingMetric` (its name, labels and buckets are what
+dashboards rely on). The collector, the end-span processor and the compiler pass are `@internal`.
+
+A metric the recorder cannot write is logged to metrics-bundle's `metrics_bundle` channel (not counted by
+`symfony_error`) and never fails the span.
 
 ## Local development
 
